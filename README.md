@@ -1,98 +1,88 @@
-<p align="center">
-  <a href="http://nestjs.com/" target="blank"><img src="https://nestjs.com/img/logo-small.svg" width="120" alt="Nest Logo" /></a>
-</p>
+# Spigifolio
 
-[circleci-image]: https://img.shields.io/circleci/build/github/nestjs/nest/master?token=abc123def456
-[circleci-url]: https://circleci.com/gh/nestjs/nest
+Spigifolio is the backend for a personal investment portfolio dashboard. It is built with NestJS and connects to a PostgreSQL database. The goal was to simulate the kind of API a fintech company would build to power an investment product: portfolio summaries, asset positions, and transaction history. The frontend lives in a separate repository: [spigifolio-web](https://github.com/oliverTuesta/spigifolio-web).
+---
 
-  <p align="center">A progressive <a href="http://nodejs.org" target="_blank">Node.js</a> framework for building efficient and scalable server-side applications.</p>
-    <p align="center">
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/v/@nestjs/core.svg" alt="NPM Version" /></a>
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/l/@nestjs/core.svg" alt="Package License" /></a>
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/dm/@nestjs/common.svg" alt="NPM Downloads" /></a>
-<a href="https://circleci.com/gh/nestjs/nest" target="_blank"><img src="https://img.shields.io/circleci/build/github/nestjs/nest/master" alt="CircleCI" /></a>
-<a href="https://discord.gg/G7Qnnhy" target="_blank"><img src="https://img.shields.io/badge/discord-online-brightgreen.svg" alt="Discord"/></a>
-<a href="https://opencollective.com/nest#backer" target="_blank"><img src="https://opencollective.com/nest/backers/badge.svg" alt="Backers on Open Collective" /></a>
-<a href="https://opencollective.com/nest#sponsor" target="_blank"><img src="https://opencollective.com/nest/sponsors/badge.svg" alt="Sponsors on Open Collective" /></a>
-  <a href="https://paypal.me/kamilmysliwiec" target="_blank"><img src="https://img.shields.io/badge/Donate-PayPal-ff3f59.svg" alt="Donate us"/></a>
-    <a href="https://opencollective.com/nest#sponsor"  target="_blank"><img src="https://img.shields.io/badge/Support%20us-Open%20Collective-41B883.svg" alt="Support us"></a>
-  <a href="https://twitter.com/nestframework" target="_blank"><img src="https://img.shields.io/twitter/follow/nestframework.svg?style=social&label=Follow" alt="Follow us on Twitter"></a>
-</p>
-  <!--[![Backers on Open Collective](https://opencollective.com/nest/backers/badge.svg)](https://opencollective.com/nest#backer)
-  [![Sponsors on Open Collective](https://opencollective.com/nest/sponsors/badge.svg)](https://opencollective.com/nest#sponsor)-->
+## Screenshot
 
-## Description
+<img width="1584" height="1238" alt="image" src="https://github.com/user-attachments/assets/2280f579-78c4-48c2-b7ef-6b264ba1b7d9" />
 
-[Nest](https://github.com/nestjs/nest) framework TypeScript starter repository.
+---
 
-## Project setup
+## Tech Stack
 
-```bash
-$ npm install
-```
+- NestJS with TypeScript
+- PostgreSQL
+- class-validator for DTO validation
+- Swagger for API documentation
 
-## Compile and run the project
+---
 
-```bash
-# development
-$ npm run start
+## Features
 
-# watch mode
-$ npm run start:dev
+- Portfolio summary with total balance, monthly return percentage, and number of active positions
+- Movement history with pagination and filters by transaction type and date range
+- Clean modular backend structure following NestJS conventions
+- Environment-based configuration
 
-# production mode
-$ npm run start:prod
-```
+---
 
-## Run tests
+## Database Schema
+
+<img width="1718" height="1120" alt="image" src="https://github.com/user-attachments/assets/2acc6a67-f0a5-47f4-97c2-2db1bafad5b0" />
+
+The database has five tables. `assets` stores the available financial instruments (stocks, ETFs, bonds, crypto) and `asset_prices` holds their historical closing prices, which is what drives the portfolio chart. `users` is straightforward account information. `holdings` ties a user to their current positions, storing quantity and average purchase price so unrealized gains can be calculated at query time. `movements` is the transaction log, recording every buy, sell, and dividend event with a `CHECK` constraint on the type column.
+
+---
+
+## Seed Data
+
+A SQL seed file is included at `database/seed.sql`. It populates the `assets` table with a representative set of instruments across four categories: stocks (GOOGL, BAP, META), ETFs (SPY, QQQ, VTI), bonds (TLT, BND), and crypto (BTC, ETH). It also inserts approximately six months of weekly closing prices for each asset, which is enough to render a meaningful chart without bloating the database.
+
+To load the seed data after running your migrations:
 
 ```bash
-# unit tests
-$ npm run test
-
-# e2e tests
-$ npm run test:e2e
-
-# test coverage
-$ npm run test:cov
+psql -U your_user -d your_database -f database/seed.sql
 ```
 
-## Deployment
+---
 
-When you're ready to deploy your NestJS application to production, there are some key steps you can take to ensure it runs as efficiently as possible. Check out the [deployment documentation](https://docs.nestjs.com/deployment) for more information.
+## Docker
 
-If you are looking for a cloud-based platform to deploy your NestJS application, check out [Mau](https://mau.nestjs.com), our official platform for deploying NestJS applications on AWS. Mau makes deployment straightforward and fast, requiring just a few simple steps:
+The project includes a Dockerfile based on the official Node.js 20 image. It installs dependencies, builds the NestJS app, and runs the compiled output from `dist/main` on port 3000. To build and run it:
 
 ```bash
-$ npm install -g @nestjs/mau
-$ mau deploy
+docker build -t spigifolio-backend .
+docker run -p 3000:3000 --env-file .env spigifolio-backend
 ```
 
-With Mau, you can deploy your application in just a few clicks, allowing you to focus on building features rather than managing infrastructure.
+---
 
-## Resources
+## Getting Started
 
-Check out a few resources that may come in handy when working with NestJS:
+### Prerequisites
 
-- Visit the [NestJS Documentation](https://docs.nestjs.com) to learn more about the framework.
-- For questions and support, please visit our [Discord channel](https://discord.gg/G7Qnnhy).
-- To dive deeper and get more hands-on experience, check out our official video [courses](https://courses.nestjs.com/).
-- Deploy your application to AWS with the help of [NestJS Mau](https://mau.nestjs.com) in just a few clicks.
-- Visualize your application graph and interact with the NestJS application in real-time using [NestJS Devtools](https://devtools.nestjs.com).
-- Need help with your project (part-time to full-time)? Check out our official [enterprise support](https://enterprise.nestjs.com).
-- To stay in the loop and get updates, follow us on [X](https://x.com/nestframework) and [LinkedIn](https://linkedin.com/company/nestjs).
-- Looking for a job, or have a job to offer? Check out our official [Jobs board](https://jobs.nestjs.com).
+- Node.js 18+
+- PostgreSQL 14+
+- npm or yarn
 
-## Support
+```bash
+cp .env.example .env
+# Fill in your database credentials in .env
+npm install
+npm run start:dev
+```
 
-Nest is an MIT-licensed open source project. It can grow thanks to the sponsors and support by the amazing backers. If you'd like to join them, please [read more here](https://docs.nestjs.com/support).
+Once the server is running, go to `/api` and use the Swagger UI to create a user first. The `id` returned in the response is what you will need to pass to the other endpoints.
 
-## Stay in touch
+---
 
-- Author - [Kamil Myśliwiec](https://twitter.com/kammysliwiec)
-- Website - [https://nestjs.com](https://nestjs.com/)
-- Twitter - [@nestframework](https://twitter.com/nestframework)
+## API
 
-## License
+The project includes Swagger UI. Once the server is running, visit `/api` to browse and test all available endpoints interactively.
 
-Nest is [MIT licensed](https://github.com/nestjs/nest/blob/master/LICENSE).
+---
+
+## Notes
+
+This project was built as a learning exercise and a portfolio piece. It is not connected to any real brokerage or market data provider. Prices in the seed file are approximations based on historical data and are not meant to be financially accurate.
