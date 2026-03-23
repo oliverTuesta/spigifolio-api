@@ -1,6 +1,7 @@
 # Spigifolio
 
 Spigifolio is the backend for a personal investment portfolio dashboard. It is built with NestJS and connects to a PostgreSQL database. The goal was to simulate the kind of API a fintech company would build to power an investment product: portfolio summaries, asset positions, and transaction history. The frontend lives in a separate repository: [spigifolio-web](https://github.com/oliverTuesta/spigifolio-web).
+
 ---
 
 ## Screenshot
