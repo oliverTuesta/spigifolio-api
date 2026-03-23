@@ -32,4 +32,6 @@ export class Asset {
 
   @OneToMany(() => Movement, (movement) => movement.asset)
   movements: Movement[];
+
+  latestPrice?: AssetPrice;
 }
